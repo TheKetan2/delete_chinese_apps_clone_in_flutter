@@ -43,6 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       deviceApps.removeAt(index);
     });
+  }
+
+  _unInstallApp(String pkg) async {
+    await UninstallApps.uninstall(pkg);
 
     if (deviceApps.length == 0) {
       setState(() {
@@ -51,26 +55,34 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  _unInstallApp(String pkg) async {
-    await UninstallApps.uninstall(pkg);
-  }
-
   _scanForApps() async {
     List<Application> apps = await DeviceApps.getInstalledApplications(
       includeAppIcons: true,
       includeSystemApps: false,
     );
 
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Future.delayed(Duration(seconds: 2));
+
+    print(apps.length);
+
     List<Application> tempApps = [];
 
     for (int i = 0; i < apps.length; i++) {
       if (chineseApps.contains(apps[i].packageName)) {
         print(apps[i].packageName);
-        // apps.removeAt(i);
         tempApps.add(apps[i]);
       }
     }
 
+    if (tempApps.length == 0) {
+      setState(() {
+        _isAwesome = true;
+      });
+    }
     setState(() {
       deviceApps = tempApps;
       _isLoading = false;
@@ -117,24 +129,13 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
                 child: Container(
               width: double.infinity,
-              child: _isAwesome
-                  ? Center(
-                      child: Container(
-                        child: Text(
-                          "You are awesome, No China Apps found",
-                          style: TextStyle(
-                            fontSize: 25.0,
-                            color: Colors.black45,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  : !_isSearched
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : _isAwesome
                       ? Center(
                           child: Container(
                             child: Text(
-                              "Scan For Chinese Apps",
+                              "You are awesome, No China Apps found",
                               style: TextStyle(
                                 fontSize: 25.0,
                                 color: Colors.black45,
@@ -143,33 +144,48 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         )
-                      : ListView.builder(
-                          itemBuilder: (context, index) {
-                            Application app = deviceApps[index];
-                            // print("${index} : " + app.packageName);
-                            return ListTile(
-                              contentPadding: EdgeInsets.all(8),
-                              leading: app is ApplicationWithIcon
-                                  ? CircleAvatar(
-                                      backgroundImage: MemoryImage(app.icon),
-                                      backgroundColor: Colors.white,
-                                    )
-                                  : null,
-                              title: Text(app.appName),
-                              trailing: IconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
+                      : !_isSearched
+                          ? Center(
+                              child: Container(
+                                child: Text(
+                                  "Scan For Chinese Apps",
+                                  style: TextStyle(
+                                    fontSize: 25.0,
+                                    color: Colors.black45,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                onPressed: () {
-                                  _unInstallApp(deviceApps[index].packageName);
-                                  _removeApp(index);
-                                },
                               ),
-                            );
-                          },
-                          itemCount: deviceApps.length,
-                        ),
+                            )
+                          : ListView.builder(
+                              itemBuilder: (context, index) {
+                                Application app = deviceApps[index];
+                                // print("${index} : " + app.packageName);
+                                return ListTile(
+                                  contentPadding: EdgeInsets.all(8),
+                                  leading: app is ApplicationWithIcon
+                                      ? CircleAvatar(
+                                          backgroundImage:
+                                              MemoryImage(app.icon),
+                                          backgroundColor: Colors.white,
+                                        )
+                                      : null,
+                                  title: Text(app.appName),
+                                  trailing: IconButton(
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      _unInstallApp(
+                                          deviceApps[index].packageName);
+                                      _removeApp(index);
+                                    },
+                                  ),
+                                );
+                              },
+                              itemCount: deviceApps.length,
+                            ),
             )),
             RaisedButton(
               shape: RoundedRectangleBorder(

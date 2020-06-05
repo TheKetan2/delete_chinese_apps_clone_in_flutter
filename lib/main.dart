@@ -9,12 +9,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: ' China Apps',
+      title: 'Delete China Apps',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Delete China Apps'),
     );
   }
 }
@@ -29,7 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _isSearched = false;
+  bool _isAwesome = true;
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +51,38 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
+              child: Container(
+                child: _isAwesome
+                    ? Image.asset(
+                        "assets/success.png",
+                        height: 150,
+                        width: 150,
+                      )
+                    : Image.asset(
+                        "assets/dragon.png",
+                        height: 150,
+                        width: 150,
+                      ),
+              ),
+            ),
+            Expanded(
                 child: Container(
-              child: Image.asset(
-                "assets/dragon.png",
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Icon(Icons.ac_unit),
+                    title: Text("HI"),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                    ),
+                  );
+                },
+                itemCount: 10,
               ),
             )),
-            Expanded(child: Container()),
             RaisedButton(
               padding: EdgeInsets.symmetric(
                 horizontal: 100,
@@ -69,7 +95,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               color: Color(0xff2da8bb),
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  _isAwesome = !_isAwesome;
+                });
+              },
             ),
             SizedBox(
               height: 10,

@@ -3,17 +3,6 @@ import 'package:device_apps/device_apps.dart';
 import 'package:uninstall_apps/uninstall_apps.dart';
 import "./apps.dart";
 
-/*
- 015409614768
- 1434001500032311
-
-
- 1 
-
- 013719924617
- 23/05/86
-*/
-
 void main() {
   runApp(MyApp());
 }

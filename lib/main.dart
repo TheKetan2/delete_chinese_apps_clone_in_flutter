@@ -3,6 +3,17 @@ import 'package:device_apps/device_apps.dart';
 import 'package:uninstall_apps/uninstall_apps.dart';
 import "./apps.dart";
 
+/*
+ 015409614768
+ 1434001500032311
+
+
+ 1 
+
+ 013719924617
+ 23/05/86
+*/
+
 void main() {
   runApp(MyApp());
 }
@@ -45,14 +56,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  _unInstallApp(String pkg) async {
+  _unInstallApp(String pkg, int index) async {
     await UninstallApps.uninstall(pkg);
+    await Future.delayed(Duration(seconds: 2));
 
-    if (deviceApps.length == 0) {
-      setState(() {
-        _isAwesome = true;
-      });
-    }
+    setState(() {
+      deviceApps.removeAt(index);
+      _isAwesome = deviceApps.length == 0;
+    });
   }
 
   _scanForApps() async {
@@ -65,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _isLoading = true;
     });
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
 
     print(apps.length);
 
@@ -78,15 +89,16 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    if (tempApps.length == 0) {
-      setState(() {
-        _isAwesome = true;
-      });
-    }
+    // if (tempApps.length == 0) {
+    //   setState(() {
+    //     _isAwesome = true;
+    //   });
+    // }
     setState(() {
       deviceApps = tempApps;
       _isLoading = false;
       _isSearched = true;
+      _isAwesome = deviceApps.length == 0;
     });
 
     // print(deviceApps[0].appName);
@@ -144,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         )
-                      : !_isSearched
+                      : !_isSearched && !_isAwesome
                           ? Center(
                               child: Container(
                                 child: Text(
@@ -178,8 +190,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ),
                                     onPressed: () {
                                       _unInstallApp(
-                                          deviceApps[index].packageName);
-                                      _removeApp(index);
+                                        deviceApps[index].packageName,
+                                        index,
+                                      );
+                                      // _removeApp(index);
                                     },
                                   ),
                                 );

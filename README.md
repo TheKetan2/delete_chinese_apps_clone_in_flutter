@@ -2,7 +2,7 @@
 
 It's clone of viral App by the name "Delete China Apps". 
 
-It scans installed apps an d lists apps which are Chinese and then one can choose to keep them or delete.
+It scans installed apps and lists apps which are Chinese and then one can choose to keep them or delete.
 
 ### Snapshots
 
